@@ -252,5 +252,11 @@ textarea {
   h3 {
     page-break-after: avoid;
   }
+
+ .header-background {
+   background-color: lightblue;
+ }
+
+
 }
 

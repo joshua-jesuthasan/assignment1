@@ -18,26 +18,92 @@
 
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 
   <meta name="theme-color" content="#fafafa">
 </head>
 
 <body>
+<section class="hero is-primary">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Spam Detector Results
+      </h1>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+      <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Spam Probability %</th>
+        <th>Class</th>
+      </tr>
+      </thead>
+      <tbody id="results-table-body">
+      </tbody>
+    </table>
+    <div class="columns">
+      <div class="column">
+        <h2 class="subtitle">Accuracy</h2>
+        <p id="accuracy"></p>
+      </div>
+      <div class="column">
+        <h2 class="subtitle">Precision</h2>
+        <p id="precision"></p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- Add your site or application content here -->
+<script src="main.js"></script>
+</body>
+
+<script>
+  async function fetchData(url) {
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  async function loadResults() {
+    const results = await fetchData("http://localhost:8080/spamDetector-1.0/api/spam");
+    const accuracy = await fetchData("http://localhost:8080/spamDetector-1.0/api/spam/accuracy");
+    const precision = await fetchData("http://localhost:8080/spamDetector-1.0/api/spam/precision");
+
+    const tableBody = document.getElementById("results-table-body");
+    results.forEach(result => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+                <td>${result.filename}</td>
+                <td>${(result.spamProbability * 100).toFixed(2)}%</td>
+                <td>${result.class}</td>
+            `;
+      tableBody.appendChild(row);
+    });
+
+    document.getElementById("accuracy").textContent = accuracy.toFixed(2);
+    document.getElementById("precision").textContent = precision.toFixed(2);
+  }
+
+  loadResults();
+</script>
 
 
 
 
 
-  <script src="js/vendor/modernizr-3.11.2.min.js"></script>
+
+<script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/plugins.js"></script>
   <script src="js/main.js"></script>
 
   <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
   <script>
     window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
-    ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
+    ga('create', 'spamchecker-josh', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
   </script>
   <script src="https://www.google-analytics.com/analytics.js" async></script>
 </body>
